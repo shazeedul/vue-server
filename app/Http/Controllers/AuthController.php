@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -28,8 +29,8 @@ class AuthController extends Controller
 
         // return response
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer'
+            'token' => $token,
+            'user'  => auth()->user(),
         ]);
     }
 
@@ -52,7 +53,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password_confirmation' => 'required|same:password',
+            // 'password_confirmation' => 'required|same:password',
             'password' => 'required'
         ]);
 
@@ -60,8 +61,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password_confirmation' => $request->password_confirmation,
-            'password' => bcrypt($request->password)
+            'password' => Hash::make($request->password)
         ]);
 
         // generate token
@@ -69,8 +69,8 @@ class AuthController extends Controller
 
         // return response
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer'
+            'token' => $token,
+            'user'  => $user,
         ]);
     }
 
