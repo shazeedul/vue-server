@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('feedback_forms', function (Blueprint $table) {
+        Schema::create('feedback_response_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('link')->unique();
+            $table->foreignId('feedback_response_id');
+            $table->foreignId('feedback_question_id');
+            $table->text('answer')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feedback_forms');
+        Schema::dropIfExists('feedback_response_answers');
     }
 };

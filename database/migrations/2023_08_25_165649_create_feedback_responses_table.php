@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('feedback_collections', function (Blueprint $table) {
+        Schema::create('feedback_responses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('feedback_form_id');
             $table->foreignId('user_id');
-            $table->foreignId('feedback_question_id');
-            $table->text('answer')->nullable();
-            $table->string('user_agent')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feedback_collections');
+        Schema::dropIfExists('feedback_responses');
     }
 };

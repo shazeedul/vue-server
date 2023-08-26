@@ -12,15 +12,8 @@ class FeedbackFormController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $userForms = FeedbackForm::where('user_id', auth()->user()->id)->get();
+        return response()->json(['forms' => $userForms]);
     }
 
     /**
@@ -28,7 +21,26 @@ class FeedbackFormController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // try {
+            $form = FeedbackForm::create([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+            ]);
+
+            // form questions save
+            $questions = $request->input('questions');
+            foreach ($questions as $question) {
+                $form->questions()->create([
+                    'feedback_form_id' => $form->id,
+                    'question' => $question['question'],
+                ]);
+            }
+
+            return response()->json(['message' => 'Form created successfully', 'form' => $form]);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => 'Form creation failed.'], 500);
+        // }
+        
     }
 
     /**

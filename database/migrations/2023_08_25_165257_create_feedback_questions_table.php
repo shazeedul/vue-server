@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('feedback_form_id');
             $table->string('question');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

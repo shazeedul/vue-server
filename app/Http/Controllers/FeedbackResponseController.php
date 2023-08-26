@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FeedbackCollection;
+use App\Models\FeedbackResponse;
 use Illuminate\Http\Request;
 
-class FeedbackCollectionController extends Controller
+class FeedbackResponseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class FeedbackCollectionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FeedbackCollection $feedbackCollection)
+    public function show(FeedbackResponse $feedbackResponse)
     {
         //
     }
@@ -42,7 +42,7 @@ class FeedbackCollectionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FeedbackCollection $feedbackCollection)
+    public function edit(FeedbackResponse $feedbackResponse)
     {
         //
     }
@@ -50,7 +50,7 @@ class FeedbackCollectionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, FeedbackCollection $feedbackCollection)
+    public function update(Request $request, FeedbackResponse $feedbackResponse)
     {
         //
     }
@@ -58,7 +58,7 @@ class FeedbackCollectionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FeedbackCollection $feedbackCollection)
+    public function destroy(FeedbackResponse $feedbackResponse)
     {
         //
     }
