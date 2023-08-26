@@ -16,24 +16,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    // logout route
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/forms', [FeedbackFormController::class, 'index']);
+    Route::get('/forms/all', [FeedbackFormController::class, 'allForm']);
     Route::post('/forms', [FeedbackFormController::class, 'store']);
+    Route::get('/forms/{link}', [FeedbackFormController::class, 'show']);
+    Route::post('/forms/{formId}/submit', [FeedbackFormController::class, 'submit']);
 });
 
 // login & register route
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-
-
-// Route::group(['middleware' => 'auth:api'], function () {
-//     Route::post('/forms', 'FeedbackFormController@store'); // Create a feedback form
-//     Route::get('/forms', 'FeedbackFormController@index');  // Get all feedback forms for a user
-//     Route::get('/forms/{form}', 'FeedbackFormController@show'); // Get a specific feedback form
-//     Route::get('/forms/{form}/responses', 'FeedbackFormController@responses'); // Get responses for a form
-//     Route::post('/questions', 'QuestionController@store'); // Create a question
-//     // ... other routes for updating and deleting forms, questions, and responses
-// });
-

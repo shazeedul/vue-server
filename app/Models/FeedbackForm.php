@@ -57,11 +57,6 @@ class FeedbackForm extends Model
         return $this->hasMany(FeedbackQuestion::class);
     }
 
-    public function getLinkAttribute($value)
-    {
-        return url('/feedback/' . $value);
-    }
-
     public function getResponsesCountAttribute()
     {
         return $this->responses()->count();

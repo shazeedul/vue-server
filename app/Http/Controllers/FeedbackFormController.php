@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\FeedbackForm;
+use App\Models\FeedbackResponse;
 use Illuminate\Http\Request;
 
 class FeedbackFormController extends Controller
 {
+    public function allForm()
+    {
+        $forms = FeedbackForm::with(['questions'])->get();
+        return response()->json(['forms' => $forms]);
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -21,12 +28,11 @@ class FeedbackFormController extends Controller
      */
     public function store(Request $request)
     {
-        // try {
+        try {
             $form = FeedbackForm::create([
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
             ]);
-
             // form questions save
             $questions = $request->input('questions');
             foreach ($questions as $question) {
@@ -37,18 +43,24 @@ class FeedbackFormController extends Controller
             }
 
             return response()->json(['message' => 'Form created successfully', 'form' => $form]);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['message' => 'Form creation failed.'], 500);
-        // }
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Form creation failed.'], 500);
+        }
         
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(FeedbackForm $feedbackForm)
+    public function show($link)
     {
-        //
+        $formDetails = FeedbackForm::with(['questions'])->where('link', $link)->first();
+
+        if (!$formDetails) {
+            return response()->json(['message' => 'Form not found.'], 404);
+        }
+
+        return response()->json(['data' => $formDetails]);
     }
 
     /**
@@ -73,5 +85,33 @@ class FeedbackFormController extends Controller
     public function destroy(FeedbackForm $feedbackForm)
     {
         //
+    }
+
+
+    public function submit(Request $request, $formId)
+    {
+        try {
+            $feedbackResponse = FeedbackResponse::create([
+                'user_id' => auth()->user()->id,
+                'feedback_form_id' => $formId,
+            ]);
+
+            dd($feedbackResponse);
+            
+            $answers = $request->input('answers');
+
+            foreach ($answers as $answer) {
+                $feedbackResponse->answers()->create([
+                    'feedback_response_id' => $feedbackResponse->id,
+                    'feedback_question_id' => $answer['question_id'],
+                    'answer' => $answer['answer'],
+                ]);
+            }
+
+            return response()->json(['message' => 'Answers submitted successfully']);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Answers submission failed.'.$th->getMessage()], 500);
+        }
+        
     }
 }
