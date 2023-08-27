@@ -81,21 +81,4 @@ class FeedbackForm extends Model
     {
         return date('d-m-Y', strtotime($value));
     }
-
-    public function getLinkShortAttribute()
-    {
-        return Str::limit($this->link, 20);
-    }
-
-    public function getResponsesCountShortAttribute()
-    {
-        return Str::limit($this->responses_count, 20);
-    }
-
-    public function getQuestionsCountShortAttribute()
-    {
-        return Str::limit($this->questions_count, 20);
-    }
-
-
 }

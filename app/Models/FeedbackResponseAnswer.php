@@ -15,4 +15,14 @@ class FeedbackResponseAnswer extends Model
         'feedback_question_id',
         'answer',
     ];
+
+    public function response()
+    {
+        return $this->belongsTo(FeedbackResponse::class);
+    }
+
+    public function question()
+    {
+        return $this->belongsTo(FeedbackQuestion::class);
+    }
 }

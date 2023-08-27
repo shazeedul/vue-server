@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\FeedbackForm;
-use App\Models\FeedbackResponse;
 use Illuminate\Http\Request;
+use App\Models\FeedbackQuestion;
+use App\Models\FeedbackResponse;
 
 class FeedbackFormController extends Controller
 {
@@ -63,37 +64,6 @@ class FeedbackFormController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, FeedbackForm $feedbackForm)
-    {
-    
-        try {
-            $feedbackForm->update([
-                'name' => $request->input('name'),
-                'description' => $request->input('description'),
-            ]);
-            // form questions save
-            $questions = $request->input('questions');
-            foreach ($questions as $question) {
-                $feedbackForm->questions()->updateOrCreate(
-                    [
-                        'id' => $question['id'],
-                    ],
-                    [
-                        'feedback_form_id' => $feedbackForm->id,
-                        'question' => $question['question'],
-                    ]
-                );
-            }
-
-            return response()->json(['message' => 'Form updated successfully', 'form' => $feedbackForm]);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => 'Form updating failed.'], 500);
-        }
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(FeedbackForm $feedbackForm)
@@ -149,4 +119,53 @@ class FeedbackFormController extends Controller
         $answers = FeedbackResponse::with(['answers'])->where('user_id', auth()->user()->id)->where('feedback_form_id', $form->id)->first();
         return response()->json(['data' => $answers?->answers]);
     }
+
+    public function getFeedbackCollectionResponses($link)
+    {
+        $form = FeedbackForm::with('user')->where('link', $link)->first();
+        $responses = FeedbackResponse::where('feedback_form_id', $form->id)
+            ->with('answers.question') // Load the answers and their corresponding questions
+            ->with('user') // Load the user who submitted the response
+            ->get();
+
+        $questions = FeedbackQuestion::where('feedback_form_id', $form->id)->get();
+
+        
+        $tableData = [];
+        
+        $questionData = [];
+        
+        foreach ($responses as $response) {
+            $rowData = [
+                'user_name' => $response->user->name,
+                'answers' => [],
+            ];
+            
+            foreach ($questions as $question) {
+                $answer = $response->answers->where('feedback_question_id', $question->id)->first();
+                $rowData['answers'][$question->id] = $answer ? $answer->answer : '';
+            }
+            
+            $tableData[] = $rowData;
+        }
+        
+        foreach ($questions as $question) {
+            $questionData[] = [
+                'id' => $question->id,
+                'question' => $question->question,
+            ];
+        }
+
+        $formInfo = [
+            'name' => $form->name,
+            'description' => $form->description,
+            'creator_name' => $form->user->name,
+            'responses_count' => $form->responses_count,
+            'questions_count' => $form->questions_count,
+            'created_at' => $form->created_at,
+        ];
+
+        return response()->json(['tableData' => $tableData, 'questionData' => $questionData, 'formInfo' => $formInfo]);
+    }
+
 }

@@ -22,11 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/forms', [FeedbackFormController::class, 'index']);
     Route::get('/forms/all', [FeedbackFormController::class, 'allForm']);
     Route::post('/forms', [FeedbackFormController::class, 'store']);
-    Route::put('/forms/{feedbackForm}', [FeedbackFormController::class, 'update']);
     Route::get('/forms/{link}/show', [FeedbackFormController::class, 'show']);
     Route::delete('/forms/{feedbackForm}', [FeedbackFormController::class, 'destroy']);
     Route::post('/forms/{formId}/submit', [FeedbackFormController::class, 'submit']);
-    Route::get('/forms/{formId}/responses', [FeedbackFormController::class, 'responses']);
+    Route::get('/form/{link}/responses', [FeedbackFormController::class, 'getFeedbackCollectionResponses']);
     Route::get('/forms/{link}/user-answers', [FeedbackFormController::class, 'answersByUser']);
 
 });
