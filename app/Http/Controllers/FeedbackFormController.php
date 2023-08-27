@@ -19,7 +19,7 @@ class FeedbackFormController extends Controller
      */
     public function index()
     {
-        $userForms = FeedbackForm::where('user_id', auth()->user()->id)->get();
+        $userForms = FeedbackForm::with(['questions'])->where('user_id', auth()->user()->id)->get();
         return response()->json(['forms' => $userForms]);
     }
 
@@ -63,19 +63,34 @@ class FeedbackFormController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(FeedbackForm $feedbackForm)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, FeedbackForm $feedbackForm)
     {
-        //
+    
+        try {
+            $feedbackForm->update([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+            ]);
+            // form questions save
+            $questions = $request->input('questions');
+            foreach ($questions as $question) {
+                $feedbackForm->questions()->updateOrCreate(
+                    [
+                        'id' => $question['id'],
+                    ],
+                    [
+                        'feedback_form_id' => $feedbackForm->id,
+                        'question' => $question['question'],
+                    ]
+                );
+            }
+
+            return response()->json(['message' => 'Form updated successfully', 'form' => $feedbackForm]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Form updating failed.'], 500);
+        }
     }
 
     /**
@@ -83,34 +98,17 @@ class FeedbackFormController extends Controller
      */
     public function destroy(FeedbackForm $feedbackForm)
     {
-        //
+        try {
+            $feedbackForm->delete();
+            return response()->json(['message' => 'Form deleted successfully']);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Form deletion failed.'], 500);
+        }
     }
 
 
     public function submit(Request $request, $formId)
     {
-        // try {
-        //     $feedbackResponse = FeedbackResponse::create([
-        //         'user_id' => auth()->user()->id,
-        //         'feedback_form_id' => $formId,
-        //     ]);
-
-        //     $answers = json_decode($request->getContent(), true);
-
-        //     foreach ($answers as $answer) {
-        //         $feedbackResponse->answers()->create([
-        //             'feedback_response_id' => $feedbackResponse->id,
-        //             'feedback_question_id' => $answer['question_id'],
-        //             'answer' => $answer['answer'],
-        //         ]);
-        //     }
-
-        //     return response()->json(['message' => 'Answers submitted successfully']);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['message' => 'Answers submission failed.'.$th->getMessage()], 500);
-        // }
-
-        // create or update answers
         try {
             $feedbackResponse = FeedbackResponse::updateOrCreate(
                 [
