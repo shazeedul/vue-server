@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    // feedback form routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/forms', [FeedbackFormController::class, 'index']);
@@ -23,6 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/forms', [FeedbackFormController::class, 'store']);
     Route::get('/forms/{link}', [FeedbackFormController::class, 'show']);
     Route::post('/forms/{formId}/submit', [FeedbackFormController::class, 'submit']);
+    Route::get('/forms/{formId}/responses', [FeedbackFormController::class, 'responses']);
+    Route::get('/forms/{link}/answers', [FeedbackFormController::class, 'answersByUser']);
+
 });
 
 // login & register route

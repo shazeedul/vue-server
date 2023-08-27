@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\FeedbackForm;
+use App\Models\FeedbackResponseAnswer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FeedbackResponse extends Model
 {
@@ -27,6 +30,6 @@ class FeedbackResponse extends Model
 
     public function answers()
     {
-        return $this->hasMany(FeedbackAnswer::class);
+        return $this->hasMany(FeedbackResponseAnswer::class);
     }
 }
